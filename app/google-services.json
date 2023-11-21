@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687860377710",
+    "project_id": "bbddandroid-4557b",
+    "storage_bucket": "bbddandroid-4557b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687860377710:android:2ba7bef5baf78c65fa1e7f",
+        "android_client_info": {
+          "package_name": "com.example.primercrud"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY5qTRfR3zvuL5FviwlV80VP9IRGASHeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
