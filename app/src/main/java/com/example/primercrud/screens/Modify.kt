@@ -25,6 +25,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,27 +35,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
     var id by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
-    var surname by rememberSaveable { mutableStateOf("") }
-    var phoneNumber by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+    var manufacturer by rememberSaveable { mutableStateOf("") }
+    var stock by rememberSaveable { mutableStateOf("") }
+    var nombre_coleccion = "Clientes"
+    val db = FirebaseFirestore.getInstance()
     Column(
         modifier = Modifier
             .padding(16.dp, 16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxHeight()
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack,
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable { navigationController.popBackStack() }//Vuelve hacia la última pantalla
@@ -62,24 +65,25 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "Guarda un cliente",
+                text = "Modifica un producto",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
 
+
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "DNI", style = MaterialTheme.typography.bodyLarge
+            text = "ID", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = id,
             onValueChange = { id = it },
-            placeholder = { Text(text = "DNI...") },
+            placeholder = { Text(text = "ID...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -96,42 +100,71 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Apellidos", style = MaterialTheme.typography.bodyLarge
+            text = "Precio", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = surname,
-            onValueChange = { surname = it },
-            placeholder = { Text(text = "Apellidos...") },
+            value = price,
+            onValueChange = { price = it },
+            placeholder = { Text(text = "Precio€...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Teléfono", style = MaterialTheme.typography.bodyLarge
+            text = "proveedor", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
-            placeholder = { Text(text = "Teléfono...") },
+            value = manufacturer,
+            onValueChange = { manufacturer = it },
+            placeholder = { Text(text = "Proveedor...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Correo", style = MaterialTheme.typography.bodyLarge
+            text = "Unidades", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text(text = "Correo...") },
+            value = stock,
+            onValueChange = { stock = it },
+            placeholder = { Text(text = "Unidades...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Button(onClick = { navigationController.navigate("List") },
-            modifier = modifier.align(Alignment.CenterHorizontally)
+        val dato = hashMapOf(
+            "id" to id.toString(),
+            "nombre" to name.toString(),
+            "precio" to price.toString(),
+            "proveedor" to manufacturer.toString(),
+            "unidades" to stock.toString()
+        )
+        var mensaje_confirmacion by remember { mutableStateOf("") }
+        Button(onClick = {
+            if (id.isNotBlank()) {
+                if (db.collection(nombre_coleccion).document(id) != null){
+                db.collection(nombre_coleccion)
+                    .document(id)
+                    .set(dato)
+                    .addOnSuccessListener {
+
+                        mensaje_confirmacion = "El dato con id: " + id + " ha sido modificar"
+                        id = ""
+
+
+                    }.addOnFailureListener {
+
+                        mensaje_confirmacion = "El dato con id: " + id + " no se ha podido modificar"
+                        id = " "
+
+                    }}
+            }
+
+        },
+            modifier = modifier
+                .align(Alignment.CenterHorizontally)
                 .width(120.dp),
             shape = RectangleShape,
             contentPadding = PaddingValues(8.dp),
@@ -140,6 +173,6 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
                     text = "Enviar"
                 )
             })
-
+        Text(text = mensaje_confirmacion)
     }
 }

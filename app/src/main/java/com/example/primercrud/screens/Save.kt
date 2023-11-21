@@ -1,5 +1,7 @@
 package com.example.primercrud.screens
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,6 +34,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +46,8 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
     var surname by rememberSaveable { mutableStateOf("") }
     var phoneNumber by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
+    var nombre_coleccion = "Clientes"
+    val db = FirebaseFirestore.getInstance()
     Column(
         modifier = Modifier
             .padding(16.dp, 16.dp)
@@ -48,10 +55,10 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxHeight()
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack,
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable { navigationController.popBackStack() }//Vuelve hacia la última pantalla
@@ -128,7 +135,34 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
             placeholder = { Text(text = "Correo...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Button(onClick = { navigationController.navigate("List") },
+        val dato = hashMapOf(
+            "dni" to id.toString(),
+            "nombre" to name.toString(),
+            "apellidos" to surname.toString(),
+            "telefono" to phoneNumber.toString(),
+            "correo" to email.toString()
+        )
+        var mensaje_confirmacion by remember { mutableStateOf("") }
+        Button(onClick = {
+            if (id.isNotBlank()) {
+                if (db.collection(nombre_coleccion).document(id) == null) {
+                    db.collection(nombre_coleccion).document(id).set(dato).addOnSuccessListener {
+
+                            mensaje_confirmacion = "El dato con id: " + id + " ha sido guardado"
+                            id = ""
+
+
+                        }.addOnFailureListener {
+
+                            mensaje_confirmacion =
+                                "El dato con id: " + id + " no se ha podido guardar"
+                            id = " "
+
+                        }
+                }
+            }
+
+        },
             modifier = modifier
                 .align(Alignment.CenterHorizontally)
                 .width(120.dp),
@@ -139,6 +173,6 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
                     text = "Enviar"
                 )
             })
-
+        Text(text = mensaje_confirmacion)
     }
 }
