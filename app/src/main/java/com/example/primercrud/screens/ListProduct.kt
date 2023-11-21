@@ -1,7 +1,5 @@
 package com.example.primercrud.screens
 
-import android.graphics.Paint.Align
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,14 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.primercrud.navigation.AppScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
+
+fun ListProduct(navigationController: NavController, modifier: Modifier = Modifier) {
     var id by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
     var surname by rememberSaveable { mutableStateOf("") }
@@ -49,7 +48,6 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxHeight()
@@ -68,6 +66,7 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
+
 
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -131,7 +130,8 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Button(onClick = { navigationController.navigate("List") },
-            modifier = modifier.align(Alignment.CenterHorizontally)
+            modifier = modifier
+                .align(Alignment.CenterHorizontally)
                 .width(120.dp),
             shape = RectangleShape,
             contentPadding = PaddingValues(8.dp),
