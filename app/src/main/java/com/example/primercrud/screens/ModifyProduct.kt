@@ -1,7 +1,5 @@
 package com.example.primercrud.screens
 
-import android.graphics.Paint.Align
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,21 +29,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.primercrud.navigation.AppScreens
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
+
+fun ModifyProduct(navigationController: NavController, modifier: Modifier = Modifier) {
     var id by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
     var price by rememberSaveable { mutableStateOf("") }
     var manufacturer by rememberSaveable { mutableStateOf("") }
     var stock by rememberSaveable { mutableStateOf("") }
-    var nombre_coleccion = "Clientes"
+    var nombre_coleccion = "Productos"
     val db = FirebaseFirestore.getInstance()
     Column(
         modifier = Modifier
@@ -144,23 +143,23 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         var mensaje_confirmacion by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
-                if (db.collection(nombre_coleccion).document(id) != null){
-                db.collection(nombre_coleccion)
-                    .document(id)
-                    .set(dato)
-                    .addOnSuccessListener {
+                if (db.collection(nombre_coleccion).document(id) != null) {
+                    db.collection(nombre_coleccion).document(id).set(dato).addOnSuccessListener {
 
-                        mensaje_confirmacion = "El dato con id: " + id + " ha sido modificar"
-                        id = ""
+                            mensaje_confirmacion = "El dato con id: " + id + " ha sido guardado"
+                            id = ""
 
 
-                    }.addOnFailureListener {
+                        }.addOnFailureListener {
 
-                        mensaje_confirmacion = "El dato con id: " + id + " no se ha podido modificar"
-                        id = " "
+                            mensaje_confirmacion =
+                                "El dato con id: " + id + " no se ha podido guardar"
+                            id = " "
 
-                    }}
+                        }
+                }
             }
+
 
         },
             modifier = modifier

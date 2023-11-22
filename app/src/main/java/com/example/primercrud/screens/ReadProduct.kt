@@ -1,7 +1,5 @@
 package com.example.primercrud.screens
 
-import android.graphics.Paint.Align
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,28 +23,24 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
+
+fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifier) {
     var id by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
-    var price by rememberSaveable { mutableStateOf("") }
-    var manufacturer by rememberSaveable { mutableStateOf("") }
-    var stock by rememberSaveable { mutableStateOf("") }
-    var nombre_coleccion = "Clientes"
-    val db = FirebaseFirestore.getInstance()
+    var surname by rememberSaveable { mutableStateOf("") }
+    var phoneNumber by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
     Column(
         modifier = Modifier
             .padding(16.dp, 16.dp)
@@ -54,10 +48,10 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxHeight()
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
+            Icon(imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable { navigationController.popBackStack() }//Vuelve hacia la última pantalla
@@ -65,7 +59,7 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "Modifica un producto",
+                text = "Guarda un cliente",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.padding(start = 8.dp)
@@ -76,14 +70,14 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "ID", style = MaterialTheme.typography.bodyLarge
+            text = "DNI", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = id,
             onValueChange = { id = it },
-            placeholder = { Text(text = "ID...") },
+            placeholder = { Text(text = "DNI...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -100,69 +94,41 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Precio", style = MaterialTheme.typography.bodyLarge
+            text = "Apellidos", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = price,
-            onValueChange = { price = it },
-            placeholder = { Text(text = "Precio€...") },
+            value = surname,
+            onValueChange = { surname = it },
+            placeholder = { Text(text = "Apellidos...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "proveedor", style = MaterialTheme.typography.bodyLarge
+            text = "Teléfono", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = manufacturer,
-            onValueChange = { manufacturer = it },
-            placeholder = { Text(text = "Proveedor...") },
+            value = phoneNumber,
+            onValueChange = { phoneNumber = it },
+            placeholder = { Text(text = "Teléfono...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Unidades", style = MaterialTheme.typography.bodyLarge
+            text = "Correo", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = stock,
-            onValueChange = { stock = it },
-            placeholder = { Text(text = "Unidades...") },
+            value = email,
+            onValueChange = { email = it },
+            placeholder = { Text(text = "Correo...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        val dato = hashMapOf(
-            "id" to id.toString(),
-            "nombre" to name.toString(),
-            "precio" to price.toString(),
-            "proveedor" to manufacturer.toString(),
-            "unidades" to stock.toString()
-        )
-        var mensaje_confirmacion by remember { mutableStateOf("") }
-        Button(onClick = {
-            if (id.isNotBlank()) {
-                if (db.collection(nombre_coleccion).document(id) != null){
-                db.collection(nombre_coleccion)
-                    .document(id)
-                    .set(dato)
-                    .addOnSuccessListener {
-
-                        mensaje_confirmacion = "El dato con id: " + id + " ha sido modificar"
-                        id = ""
-
-
-                    }.addOnFailureListener {
-
-                        mensaje_confirmacion = "El dato con id: " + id + " no se ha podido modificar"
-                        id = " "
-
-                    }}
-            }
-
-        },
+        Button(onClick = { navigationController.navigate("List") },
             modifier = modifier
                 .align(Alignment.CenterHorizontally)
                 .width(120.dp),
@@ -173,6 +139,6 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
                     text = "Enviar"
                 )
             })
-        Text(text = mensaje_confirmacion)
+
     }
 }
