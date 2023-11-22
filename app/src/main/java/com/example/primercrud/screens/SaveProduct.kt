@@ -135,32 +135,55 @@ fun SaveProduct(navigationController: NavController, modifier: Modifier = Modifi
         Spacer(modifier = Modifier.padding(8.dp))
         val dato = hashMapOf(
             "id" to id.toString(),
-            "nombre" to name.toString(),
-            "precio" to price.toString(),
-            "proveedor" to manufacturer.toString(),
-            "unidades" to stock.toString()
+            "name" to name.toString(),
+            "price" to price.toString(),
+            "manufacturer" to manufacturer.toString(),
+            "stock" to stock.toString()
         )
         var mensaje_confirmacion by remember { mutableStateOf("") }
+        var datos by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
-                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
-                    .addOnSuccessListener {encontrado ->
-                        if (encontrado.isEmpty()){
-                            db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "El dato con id: " + id + " ha sido creado"
-                            id = ""
-                        }else{
-                            mensaje_confirmacion = "El dato con id: " + id + " ya existe"
-                            id = ""}
 
+
+                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
+                    .addOnSuccessListener { resultado ->
+                        for (encontrado in resultado) {
+                            datos += "${encontrado.id}: ${encontrado.data}\n"
+
+                            name += encontrado["name"].toString()
+                            price += encontrado["price"].toString()
+                            manufacturer += encontrado["manufacturer"].toString()
+                            stock += encontrado["stock"].toString()
+
+
+                        }
+                        if (datos.isEmpty()) {
+                            db.collection(nombre_coleccion).document(id).set(dato)
+                            mensaje_confirmacion = "Se ha guardado correctamente el cliente con el id : " + id
+
+                        } else {
+                            mensaje_confirmacion = "Ya existe un producto con ese ID"
+                        }
+                        datos = ""
+                        id = ""
+                        name = ""
+                        price = ""
+                        manufacturer = ""
+                        stock = ""
 
                     }.addOnFailureListener {
 
-                        mensaje_confirmacion =
-                            "La conexión ha fallado"
-                        id = " "
+                        mensaje_confirmacion = "La conexión ha fallado"
 
+                        datos = ""
+                        id = ""
+                        name = ""
+                        price = ""
+                        manufacturer = ""
+                        stock = ""
                     }
+
             }
 
 
@@ -176,5 +199,6 @@ fun SaveProduct(navigationController: NavController, modifier: Modifier = Modifi
                 )
             })
         Text(text = mensaje_confirmacion)
+
     }
 }

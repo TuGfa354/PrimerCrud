@@ -63,7 +63,7 @@ fun Delete(navigationController: NavController, modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "Modifica un producto",
+                text = "Elimina un cliente",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.padding(start = 8.dp)

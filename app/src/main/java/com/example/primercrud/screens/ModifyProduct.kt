@@ -137,31 +137,55 @@ fun ModifyProduct(navigationController: NavController, modifier: Modifier = Modi
         Spacer(modifier = Modifier.padding(8.dp))
         val dato = hashMapOf(
             "id" to id.toString(),
-            "nombre" to name.toString(),
-            "precio" to price.toString(),
-            "proveedor" to manufacturer.toString(),
-            "unidades" to stock.toString()
+            "name" to name.toString(),
+            "price" to price.toString(),
+            "manufacturer" to manufacturer.toString(),
+            "stock" to stock.toString()
         )
+        var datos by remember { mutableStateOf("") }
+
         var mensaje_confirmacion by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
+
+
                 db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
-                    .addOnSuccessListener {encontrado ->
-                        if (encontrado.isEmpty()){
+                    .addOnSuccessListener {resultado ->
+                        for (encontrado in resultado){
+                            datos+="${encontrado.id}: ${encontrado.data}\n"
+
+                            name +=encontrado["name"].toString()
+                            price +=encontrado["price"].toString()
+                            manufacturer +=encontrado["manufacturer"].toString()
+                            stock +=encontrado["stock"].toString()
+
+
+                        }
+                        if (datos.isEmpty()){
                             mensaje_confirmacion ="No existen datos"
                         }else{
                             db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "El dato con id: " + id + " ha sido modificado"
-                            id = ""}
-
+                            mensaje_confirmacion = "Se ha modificado correctamente el cliente con el id : "+ id
+                        }
+                        datos = ""
+                        id=""
+                        name = ""
+                        price = ""
+                        manufacturer = ""
+                        stock = ""
 
                     }.addOnFailureListener {
 
-                        mensaje_confirmacion =
-                            "La conexión ha fallado"
-                        id = " "
+                        mensaje_confirmacion = "La conexión ha fallado"
 
+                        datos = ""
+                        id=""
+                        name = ""
+                        price = ""
+                        manufacturer = ""
+                        stock = ""
                     }
+
             }
 
 

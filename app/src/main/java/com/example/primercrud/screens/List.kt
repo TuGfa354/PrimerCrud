@@ -37,7 +37,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun List(navigationController: NavController, modifier: Modifier = Modifier) {
-    var id by rememberSaveable { mutableStateOf("") }
     var nombre_coleccion = "Clientes"
     val db = FirebaseFirestore.getInstance()
     Column(
@@ -68,42 +67,31 @@ fun List(navigationController: NavController, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.padding(8.dp))
 
-        Text(
-            text = "DNI", style = MaterialTheme.typography.bodyLarge
-        )
 
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = id,
-            onValueChange = { id = it },
-            placeholder = { Text(text = "DNI...") },
-        )
         var mensaje_confirmacion by remember { mutableStateOf("") }
         var datos by remember { mutableStateOf("") }
         Button(onClick = {
-            if (id.isNotBlank()) {
-                datos =""
 
+                datos =""
                 db.collection(nombre_coleccion).get()
                     .addOnSuccessListener { resultado ->
                         for (encontrado in resultado){
                             datos+="${encontrado.id}: ${encontrado.data}\n"
-                            mensaje_confirmacion ="entra en el bucle"
+                            datos += "\n" // Add a newline to separate documents
+
                         }
                         if (datos.isEmpty()){
-                            datos = "No existen datos"
+                            mensaje_confirmacion = "No existen datos"
                         }
-                        id = ""
 
 
                     }.addOnFailureListener {
 
                         mensaje_confirmacion = "La conexión ha fallado"
-                        id = " "
 
                     }
 
-            }
+
 
 
         },
@@ -114,11 +102,12 @@ fun List(navigationController: NavController, modifier: Modifier = Modifier) {
             contentPadding = PaddingValues(8.dp),
             content = {
                 Text(
-                    text = "Enviar"
+                    text = "Cargar datos"
                 )
             })
         Text(text = mensaje_confirmacion)
         Text(text = datos)
+
 
     }
 }

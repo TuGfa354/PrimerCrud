@@ -78,29 +78,24 @@ fun ListProduct(navigationController: NavController, modifier: Modifier = Modifi
         var mensaje_confirmacion by remember { mutableStateOf("") }
         var datos by remember { mutableStateOf("") }
         Button(onClick = {
-            if (id.isNotBlank()) {
-                    datos =""
 
-                db.collection(nombre_coleccion).get()
-                    .addOnSuccessListener { resultado ->
-                        for (encontrado in resultado){
-                            datos+="${encontrado.id}: ${encontrado.data}\n"
-
-                        }
-                        if (datos.isEmpty()){
-                            datos = "No existen datos"
-                        }
-                        id = ""
-
-
-                    }.addOnFailureListener {
-
-                        mensaje_confirmacion = "La conexión ha fallado"
-                        id = " "
+            datos = ""
+            db.collection(nombre_coleccion).get().addOnSuccessListener { resultado ->
+                    for (encontrado in resultado) {
+                        datos += "${encontrado.id}: ${encontrado.data}\n"
+                        datos += "\n" // Add a newline to separate documents
 
                     }
+                    if (datos.isEmpty()) {
+                        mensaje_confirmacion = "No existen datos"
+                    }
 
-            }
+
+                }.addOnFailureListener {
+
+                    mensaje_confirmacion = "La conexión ha fallado"
+
+                }
 
 
         },

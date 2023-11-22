@@ -137,31 +137,54 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(8.dp))
         val dato = hashMapOf(
             "id" to id.toString(),
-            "nombre" to name.toString(),
-            "precio" to surname.toString(),
-            "proveedor" to phoneNumber.toString(),
-            "unidades" to email.toString()
+            "name" to name.toString(),
+            "surname" to surname.toString(),
+            "phoneNumber" to phoneNumber.toString(),
+            "email" to email.toString()
         )
+        var datos by remember { mutableStateOf("") }
         var mensaje_confirmacion by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
+
+
                 db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
-                    .addOnSuccessListener {encontrado ->
-                        if (encontrado.isEmpty()){
+                    .addOnSuccessListener {resultado ->
+                        for (encontrado in resultado){
+                            datos+="${encontrado.id}: ${encontrado.data}\n"
+
+                            name +=encontrado["name"].toString()
+                            surname +=encontrado["surname"].toString()
+                            phoneNumber +=encontrado["phoneNumber"].toString()
+                            email +=encontrado["email"].toString()
+
+
+                        }
+                        if (datos.isEmpty()){
                             mensaje_confirmacion ="No existen datos"
                         }else{
-                        db.collection(nombre_coleccion).document(id).set(dato)
-                        mensaje_confirmacion = "El dato con id: " + id + " ha sido modificado"
-                        id = ""}
-
+                            db.collection(nombre_coleccion).document(id).set(dato)
+                            mensaje_confirmacion = "Se ha modificado correctamente el cliente con el id : "+ id
+                        }
+                        datos = ""
+                        id=""
+                        name = ""
+                        surname = ""
+                        phoneNumber = ""
+                        email = ""
 
                     }.addOnFailureListener {
 
-                        mensaje_confirmacion =
-                            "La conexión ha fallado"
-                        id = " "
+                        mensaje_confirmacion = "La conexión ha fallado"
 
+                        datos = ""
+                        id=""
+                        name = ""
+                        surname = ""
+                        phoneNumber = ""
+                        email = ""
                     }
+
             }
 
         },

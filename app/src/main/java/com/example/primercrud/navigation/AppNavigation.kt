@@ -17,7 +17,7 @@ fun AppNavigation(){
         composable(AppScreens.Save.path) { Save(navigationController) }
         composable(AppScreens.SaveProduct.path) { SaveProduct(navigationController) }
         composable(AppScreens.Read.path) { Read(navigationController) }
-        composable(AppScreens.Read.path) { Read(navigationController) }
+        composable(AppScreens.ReadProduct.path) { ReadProduct(navigationController) }
         composable(AppScreens.Modify.path) { Modify(navigationController) }
         composable(AppScreens.ModifyProduct.path) { ModifyProduct(navigationController) }
         composable(AppScreens.Delete.path) { Delete(navigationController) }

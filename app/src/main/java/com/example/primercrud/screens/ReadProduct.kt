@@ -82,17 +82,12 @@ fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifi
             modifier = Modifier.fillMaxWidth(),
             value = id,
             onValueChange = { id = it },
-            placeholder = { Text(text = "DNI...") },
+            placeholder = { Text(text = "ID...") },
         )
         var mensaje_confirmacion by remember { mutableStateOf("") }
         var datos by remember { mutableStateOf("") }
         Button(onClick = {
-            datos = ""
-            id=""
-            name = ""
-            price = ""
-            manufacturer = ""
-            stock = ""
+
             if (id.isNotBlank()) {
 
 
@@ -114,7 +109,7 @@ fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifi
                     }.addOnFailureListener {
 
                         mensaje_confirmacion = "La conexión ha fallado"
-                        id = " "
+
 
                     }
 
@@ -133,11 +128,8 @@ fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifi
                 )
             })
         Text(text = mensaje_confirmacion)
-        //Text(text = datos)
-        Text(text = "Nombre: "+name)
-        Text(text = "Precio: "+ price)
-        Text(text = "Proveedor: "+ manufacturer)
-        Text(text = "Unidades: "+ stock)
+        Text(text = datos)
+
 
     }
 }

@@ -104,23 +104,13 @@ fun Read(navigationController: NavController, modifier: Modifier = Modifier) {
                             if (datos.isEmpty()){
                                 datos ="No existen datos"
                             }
-                        datos = ""
-                        id=""
-                        name = ""
-                        surname = ""
-                        phoneNumber = ""
-                        email = ""
+
 
                     }.addOnFailureListener {
 
                         mensaje_confirmacion = "La conexión ha fallado"
 
-                        datos = ""
-                        id=""
-                        name = ""
-                        surname = ""
-                        phoneNumber = ""
-                        email = ""
+
                     }
 
             }
@@ -139,10 +129,7 @@ fun Read(navigationController: NavController, modifier: Modifier = Modifier) {
             })
         Text(text = mensaje_confirmacion)
         Text(text = datos)
-        Text(text = "Nombre: "+name)
-        Text(text = "Apellidos: "+ surname)
-        Text(text = "Teléfono: "+ phoneNumber)
-        Text(text = "Correo: "+ email)
+
 
     }
 }

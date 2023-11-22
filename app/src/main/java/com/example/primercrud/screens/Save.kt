@@ -137,33 +137,56 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.padding(8.dp))
         val dato = hashMapOf(
-            "dni" to id.toString(),
-            "nombre" to name.toString(),
-            "apellidos" to surname.toString(),
-            "telefono" to phoneNumber.toString(),
-            "correo" to email.toString()
+            "id" to id.toString(),
+            "namme" to name.toString(),
+            "surname" to surname.toString(),
+            "phoneNumber" to phoneNumber.toString(),
+            "email" to email.toString()
         )
         var mensaje_confirmacion by remember { mutableStateOf("") }
+        var datos by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
-                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
-                    .addOnSuccessListener {encontrado ->
-                        if (encontrado.isEmpty()){
-                            db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "El dato con id: " + id + " ha sido creado"
-                            id = ""
-                        }else{
-                            mensaje_confirmacion = "El dato con id: " + id + " ya existe"
-                            id = ""}
 
+
+                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
+                    .addOnSuccessListener {resultado ->
+                        for (encontrado in resultado){
+                            datos+="${encontrado.id}: ${encontrado.data}\n"
+
+                            name +=encontrado["name"].toString()
+                            surname +=encontrado["surname"].toString()
+                            phoneNumber +=encontrado["phoneNumber"].toString()
+                            email +=encontrado["email"].toString()
+
+
+                        }
+                        if (datos.isEmpty()){
+                            db.collection(nombre_coleccion).document(id).set(dato)
+                            mensaje_confirmacion = "Se ha guardado correctamente el cliente con el id : "+ id
+
+                        }else{
+                            mensaje_confirmacion ="Ya existe un cliente con ese ID"
+                        }
+                        datos = ""
+                        id=""
+                        name = ""
+                        surname = ""
+                        phoneNumber = ""
+                        email = ""
 
                     }.addOnFailureListener {
 
-                        mensaje_confirmacion =
-                            "La conexión ha fallado"
-                        id = " "
+                        mensaje_confirmacion = "La conexión ha fallado"
 
+                        datos = ""
+                        id=""
+                        name = ""
+                        surname = ""
+                        phoneNumber = ""
+                        email = ""
                     }
+
             }
 
         },
