@@ -44,6 +44,8 @@ fun ModifyProduct(navigationController: NavController, modifier: Modifier = Modi
     var price by rememberSaveable { mutableStateOf("") }
     var manufacturer by rememberSaveable { mutableStateOf("") }
     var stock by rememberSaveable { mutableStateOf("") }
+    val fieldBusqueda = "id"
+
     var nombre_coleccion = "Productos"
     val db = FirebaseFirestore.getInstance()
     Column(
@@ -143,21 +145,23 @@ fun ModifyProduct(navigationController: NavController, modifier: Modifier = Modi
         var mensaje_confirmacion by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
-                if (db.collection(nombre_coleccion).document(id) != null) {
-                    db.collection(nombre_coleccion).document(id).set(dato).addOnSuccessListener {
+                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
+                    .addOnSuccessListener {encontrado ->
+                        if (encontrado.isEmpty()){
+                            mensaje_confirmacion ="No existen datos"
+                        }else{
+                            db.collection(nombre_coleccion).document(id).set(dato)
+                            mensaje_confirmacion = "El dato con id: " + id + " ha sido modificado"
+                            id = ""}
 
-                            mensaje_confirmacion = "El dato con id: " + id + " ha sido guardado"
-                            id = ""
 
+                    }.addOnFailureListener {
 
-                        }.addOnFailureListener {
+                        mensaje_confirmacion =
+                            "La conexión ha fallado"
+                        id = " "
 
-                            mensaje_confirmacion =
-                                "El dato con id: " + id + " no se ha podido guardar"
-                            id = " "
-
-                        }
-                }
+                    }
             }
 
 

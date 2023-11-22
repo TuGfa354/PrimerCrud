@@ -23,6 +23,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,20 +40,24 @@ import androidx.navigation.NavController
 fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifier) {
     var id by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
-    var surname by rememberSaveable { mutableStateOf("") }
-    var phoneNumber by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+    var manufacturer by rememberSaveable { mutableStateOf("") }
+    var stock by rememberSaveable { mutableStateOf("") }
+    val fieldBusqueda = "id"
+    var nombre_coleccion = "Productos"
+    val db = FirebaseFirestore.getInstance()
     Column(
         modifier = Modifier
             .padding(16.dp, 16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxHeight()
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack,
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable { navigationController.popBackStack() }//Vuelve hacia la última pantalla
@@ -59,18 +65,17 @@ fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifi
             )
 
             Text(
-                text = "Guarda un cliente",
+                text = "Busca un producto",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
 
-
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "DNI", style = MaterialTheme.typography.bodyLarge
+            text = "ID", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
@@ -79,56 +84,44 @@ fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifi
             onValueChange = { id = it },
             placeholder = { Text(text = "DNI...") },
         )
-        Spacer(modifier = Modifier.padding(8.dp))
+        var mensaje_confirmacion by remember { mutableStateOf("") }
+        var datos by remember { mutableStateOf("") }
+        Button(onClick = {
+            datos = ""
+            id=""
+            name = ""
+            price = ""
+            manufacturer = ""
+            stock = ""
+            if (id.isNotBlank()) {
 
-        Text(
-            text = "Nombre", style = MaterialTheme.typography.bodyLarge
-        )
 
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = name,
-            onValueChange = { name = it },
-            placeholder = { Text(text = "Nombre...") },
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
+                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
+                    .addOnSuccessListener {resultado ->
+                        for (encontrado in resultado){
+                            datos+="${encontrado.id}: ${encontrado.data}\n"
 
-        Text(
-            text = "Apellidos", style = MaterialTheme.typography.bodyLarge
-        )
+                            name +=encontrado["name"].toString()
+                            price +=encontrado["price"].toString()
+                            manufacturer +=encontrado["manufacturer"].toString()
+                            stock +=encontrado["stock"].toString()
+                        }
+                        if (datos.isEmpty()){
+                            datos ="No existen datos"
+                        }
 
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = surname,
-            onValueChange = { surname = it },
-            placeholder = { Text(text = "Apellidos...") },
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
 
-        Text(
-            text = "Teléfono", style = MaterialTheme.typography.bodyLarge
-        )
+                    }.addOnFailureListener {
 
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
-            placeholder = { Text(text = "Teléfono...") },
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
+                        mensaje_confirmacion = "La conexión ha fallado"
+                        id = " "
 
-        Text(
-            text = "Correo", style = MaterialTheme.typography.bodyLarge
-        )
+                    }
 
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text(text = "Correo...") },
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
-        Button(onClick = { navigationController.navigate("List") },
+            }
+
+
+        },
             modifier = modifier
                 .align(Alignment.CenterHorizontally)
                 .width(120.dp),
@@ -136,9 +129,15 @@ fun ReadProduct(navigationController: NavController, modifier: Modifier = Modifi
             contentPadding = PaddingValues(8.dp),
             content = {
                 Text(
-                    text = "Enviar"
+                    text = "Cargar datos"
                 )
             })
+        Text(text = mensaje_confirmacion)
+        //Text(text = datos)
+        Text(text = "Nombre: "+name)
+        Text(text = "Precio: "+ price)
+        Text(text = "Proveedor: "+ manufacturer)
+        Text(text = "Unidades: "+ stock)
 
     }
 }

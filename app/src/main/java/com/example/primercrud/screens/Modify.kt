@@ -42,9 +42,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
     var id by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
-    var price by rememberSaveable { mutableStateOf("") }
-    var manufacturer by rememberSaveable { mutableStateOf("") }
-    var stock by rememberSaveable { mutableStateOf("") }
+    var surname by rememberSaveable { mutableStateOf("") }
+    var phoneNumber by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    val fieldBusqueda = "id"
     var nombre_coleccion = "Clientes"
     val db = FirebaseFirestore.getInstance()
     Column(
@@ -100,66 +101,67 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Precio", style = MaterialTheme.typography.bodyLarge
+            text = "Apellidos", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = price,
-            onValueChange = { price = it },
-            placeholder = { Text(text = "Precio€...") },
+            value = surname,
+            onValueChange = { surname = it },
+            placeholder = { Text(text = "Apellidos...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "proveedor", style = MaterialTheme.typography.bodyLarge
+            text = "Teléfono", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = manufacturer,
-            onValueChange = { manufacturer = it },
-            placeholder = { Text(text = "Proveedor...") },
+            value = phoneNumber,
+            onValueChange = { phoneNumber = it },
+            placeholder = { Text(text = "Teléfono...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
-            text = "Unidades", style = MaterialTheme.typography.bodyLarge
+            text = "Correo", style = MaterialTheme.typography.bodyLarge
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = stock,
-            onValueChange = { stock = it },
-            placeholder = { Text(text = "Unidades...") },
+            value = email,
+            onValueChange = { email = it },
+            placeholder = { Text(text = "Correo...") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
         val dato = hashMapOf(
             "id" to id.toString(),
             "nombre" to name.toString(),
-            "precio" to price.toString(),
-            "proveedor" to manufacturer.toString(),
-            "unidades" to stock.toString()
+            "precio" to surname.toString(),
+            "proveedor" to phoneNumber.toString(),
+            "unidades" to email.toString()
         )
         var mensaje_confirmacion by remember { mutableStateOf("") }
         Button(onClick = {
             if (id.isNotBlank()) {
-                if (db.collection(nombre_coleccion).document(id) != null){
-                db.collection(nombre_coleccion)
-                    .document(id)
-                    .set(dato)
-                    .addOnSuccessListener {
-
-                        mensaje_confirmacion = "El dato con id: " + id + " ha sido modificar"
-                        id = ""
+                db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
+                    .addOnSuccessListener {encontrado ->
+                        if (encontrado.isEmpty()){
+                            mensaje_confirmacion ="No existen datos"
+                        }else{
+                        db.collection(nombre_coleccion).document(id).set(dato)
+                        mensaje_confirmacion = "El dato con id: " + id + " ha sido modificado"
+                        id = ""}
 
 
                     }.addOnFailureListener {
 
-                        mensaje_confirmacion = "El dato con id: " + id + " no se ha podido modificar"
+                        mensaje_confirmacion =
+                            "La conexión ha fallado"
                         id = " "
 
-                    }}
+                    }
             }
 
         },

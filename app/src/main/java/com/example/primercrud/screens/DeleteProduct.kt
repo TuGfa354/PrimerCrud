@@ -100,7 +100,7 @@ fun DeleteProduct(navigationController: NavController, modifier: Modifier = Modi
 
                 }.addOnFailureListener {
 
-                    mensaje_confirmacion = "El dato con id: " + id + " no se ha podido borrar"
+                    mensaje_confirmacion = "La conexión ha fallado"
                     id = " "
 
                 }

@@ -48,7 +48,8 @@ fun MainMenu(navigationController: NavController, modifier: Modifier = Modifier)
 
         ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .fillMaxHeight()
                 .fillMaxWidth()
         ) {
             Icon(
@@ -63,7 +64,9 @@ fun MainMenu(navigationController: NavController, modifier: Modifier = Modifier)
                 text = "Gestión de clientes",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier.padding(start = 8.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .fillMaxWidth()
             )
         }
         Button(onClick = { navigationController.navigate("Save") },

@@ -98,7 +98,7 @@ fun Delete(navigationController: NavController, modifier: Modifier = Modifier) {
 
                 }.addOnFailureListener {
 
-                    mensaje_confirmacion = "El dato con id: " + id + " no se ha podido borrar"
+                    mensaje_confirmacion = "La conexión ha fallado"
                     id = " "
 
                 }
