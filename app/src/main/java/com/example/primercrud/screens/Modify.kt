@@ -149,25 +149,33 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
 
 
                 db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
-                    .addOnSuccessListener {resultado ->
-                        for (encontrado in resultado){
-                            datos+="${encontrado.id}: ${encontrado.data}\n"
+                    .addOnSuccessListener { resultado ->
+                        for (encontrado in resultado) {
+                            datos += "${encontrado.id}: ${encontrado.data}\n"
 
-                            name +=encontrado["name"].toString()
-                            surname +=encontrado["surname"].toString()
-                            phoneNumber +=encontrado["phoneNumber"].toString()
-                            email +=encontrado["email"].toString()
+                            name += encontrado["name"].toString()
+                            surname += encontrado["surname"].toString()
+                            phoneNumber += encontrado["phoneNumber"].toString()
+                            email += encontrado["email"].toString()
 
 
                         }
-                        if (datos.isEmpty()){
-                            mensaje_confirmacion ="No existen datos"
-                        }else{
-                            db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "Se ha modificado correctamente el cliente con el id : "+ id
+                        if (datos.isEmpty()) {
+                            mensaje_confirmacion = "No existen datos"
+                        } else {
+                            if (validacionDNI(id) && validacionNombre(name) && validacionApellido(
+                                    surname
+                                ) && validacionTelefono(phoneNumber) && validacionCorreo(email)
+                            ) {
+                                db.collection(nombre_coleccion).document(id).set(dato)
+                                mensaje_confirmacion =
+                                    "Se ha modificado correctamente el cliente con el id : " + id
+                            } else {
+                                mensaje_confirmacion = "Datos inválidos"
+                            }
                         }
                         datos = ""
-                        id=""
+                        id = ""
                         name = ""
                         surname = ""
                         phoneNumber = ""
@@ -178,7 +186,7 @@ fun Modify(navigationController: NavController, modifier: Modifier = Modifier) {
                         mensaje_confirmacion = "La conexión ha fallado"
 
                         datos = ""
-                        id=""
+                        id = ""
                         name = ""
                         surname = ""
                         phoneNumber = ""

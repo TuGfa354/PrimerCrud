@@ -164,8 +164,16 @@ fun ModifyProduct(navigationController: NavController, modifier: Modifier = Modi
                         if (datos.isEmpty()){
                             mensaje_confirmacion ="No existen datos"
                         }else{
-                            db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "Se ha modificado correctamente el cliente con el id : "+ id
+                            if (validacionId(id) && validacionNombre(name) && validacionPrecio(
+                                    price
+                                ) && validacionProveedor(manufacturer) && validacionUnidades(stock)
+                            ) {
+                                db.collection(nombre_coleccion).document(id).set(dato)
+                                mensaje_confirmacion =
+                                    "Se ha guardado correctamente el producto con el id : " + id
+                            }else{
+                                mensaje_confirmacion ="Datos no válidos"
+                            }
                         }
                         datos = ""
                         id=""

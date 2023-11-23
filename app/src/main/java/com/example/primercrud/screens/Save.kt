@@ -1,7 +1,6 @@
 package com.example.primercrud.screens
 
-import android.content.ContentValues.TAG
-import android.util.Log
+import android.util.Patterns
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,26 +148,34 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
 
 
                 db.collection(nombre_coleccion).whereEqualTo(fieldBusqueda, id).get()
-                    .addOnSuccessListener {resultado ->
-                        for (encontrado in resultado){
-                            datos+="${encontrado.id}: ${encontrado.data}\n"
+                    .addOnSuccessListener { resultado ->
+                        for (encontrado in resultado) {
+                            datos += "${encontrado.id}: ${encontrado.data}\n"
 
-                            name +=encontrado["name"].toString()
-                            surname +=encontrado["surname"].toString()
-                            phoneNumber +=encontrado["phoneNumber"].toString()
-                            email +=encontrado["email"].toString()
+                            name += encontrado["name"].toString()
+                            surname += encontrado["surname"].toString()
+                            phoneNumber += encontrado["phoneNumber"].toString()
+                            email += encontrado["email"].toString()
 
 
                         }
-                        if (datos.isEmpty()){
-                            db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "Se ha guardado correctamente el cliente con el id : "+ id
+                        if (datos.isEmpty()) {
+                            if (validacionDNI(id) && validacionNombre(name) && validacionApellido(
+                                    surname
+                                ) && validacionTelefono(phoneNumber) && validacionCorreo(email)
+                            ) {
+                                db.collection(nombre_coleccion).document(id).set(dato)
+                                mensaje_confirmacion =
+                                    "Se ha guardado correctamente el cliente con el id : " + id
+                            }else{
+                                mensaje_confirmacion ="Datos no válidos"
+                            }
 
-                        }else{
-                            mensaje_confirmacion ="Ya existe un cliente con ese ID"
+                        } else {
+                            mensaje_confirmacion = "Ya existe un cliente con ese ID"
                         }
                         datos = ""
-                        id=""
+                        id = ""
                         name = ""
                         surname = ""
                         phoneNumber = ""
@@ -180,7 +186,7 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
                         mensaje_confirmacion = "La conexión ha fallado"
 
                         datos = ""
-                        id=""
+                        id = ""
                         name = ""
                         surname = ""
                         phoneNumber = ""
@@ -202,4 +208,24 @@ fun Save(navigationController: NavController, modifier: Modifier = Modifier) {
             })
         Text(text = mensaje_confirmacion)
     }
+}
+
+fun validacionDNI(dni: String): Boolean {
+    return dni.matches(Regex("^\\d{8}[A-Za-z]$"))
+}
+
+fun validacionNombre(name: String): Boolean {
+    return name.matches(Regex("^[a-zA-Z ]+$"))
+}
+
+fun validacionApellido(surname: String): Boolean {
+    return surname.matches(Regex("^[a-zA-Z ]+$"))
+}
+
+fun validacionTelefono(phoneNumber: String): Boolean {
+    return phoneNumber.matches(Regex("^\\d+$"))
+}
+
+fun validacionCorreo(email: String): Boolean {
+    return Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }

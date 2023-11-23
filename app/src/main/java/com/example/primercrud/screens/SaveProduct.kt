@@ -159,8 +159,16 @@ fun SaveProduct(navigationController: NavController, modifier: Modifier = Modifi
 
                         }
                         if (datos.isEmpty()) {
-                            db.collection(nombre_coleccion).document(id).set(dato)
-                            mensaje_confirmacion = "Se ha guardado correctamente el cliente con el id : " + id
+                            if (validacionId(id) && validacionNombre(name) && validacionPrecio(
+                                    price
+                                ) && validacionProveedor(manufacturer) && validacionUnidades(stock)
+                            ) {
+                                db.collection(nombre_coleccion).document(id).set(dato)
+                                mensaje_confirmacion =
+                                    "Se ha guardado correctamente el producto con el id : " + id
+                            }else{
+                                mensaje_confirmacion ="Datos no válidos"
+                            }
 
                         } else {
                             mensaje_confirmacion = "Ya existe un producto con ese ID"
@@ -201,4 +209,16 @@ fun SaveProduct(navigationController: NavController, modifier: Modifier = Modifi
         Text(text = mensaje_confirmacion)
 
     }
+}
+fun validacionId(id: String): Boolean {
+    return id.matches(Regex("^\\d+$"))
+}
+fun validacionPrecio(price: String): Boolean {
+    return price.matches(Regex("^\\d+(\\.\\d{1,2})?$"))
+}
+fun validacionProveedor(manufacturer: String): Boolean {
+    return manufacturer.matches(Regex("^[a-zA-Z ]+$"))
+}
+fun validacionUnidades(stock: String): Boolean {
+    return stock.matches(Regex("^\\d+$"))
 }
