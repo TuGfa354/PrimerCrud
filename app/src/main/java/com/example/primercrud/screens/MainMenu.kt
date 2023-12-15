@@ -17,7 +17,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,85 +52,66 @@ fun MainMenu(navigationController: NavController, modifier: Modifier = Modifier)
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
+    ) {Row(
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = null,
+            modifier = Modifier
+                .clickable { navigationController.popBackStack() }//Vuelve hacia la última pantalla
+                .padding(8.dp)
+        )
 
-
-        ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .fillMaxHeight()
+        Text(
+            text = "Gestión de clientes",
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier
+                .padding(start = 8.dp)
                 .fillMaxWidth()
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable { navigationController.popBackStack() }//Vuelve hacia la última pantalla
-                    .padding(8.dp)
-            )
+        )
+    }
 
-            Text(
-                text = "Gestión de clientes",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .fillMaxWidth()
-            )
-        }
-        Button(onClick = { navigationController.navigate("Save") },
-            modifier = modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            content = {
-                Text(
-                    text = "Guardar", modifier = modifier.align(Alignment.CenterVertically)
+        // Menu Buttons
+        MenuButton(
+            onClick = { navigationController.navigate("Save") },
+            text = "Guardar",
+            icon = Icons.Default.Add
+        )
+        Spacer(modifier = Modifier.padding(8.dp)) // Add space
 
+        MenuButton(
+            onClick = { navigationController.navigate("Modify") },
+            text = "Modificar",
+            icon = Icons.Default.Create
+        )
+        Spacer(modifier = Modifier.padding(8.dp)) // Add space
 
-                )
-            })
-        Spacer(modifier = Modifier.padding(8.dp))
+        MenuButton(
+            onClick = { navigationController.navigate("Delete") },
+            text = "Eliminar",
+            icon = Icons.Default.Delete
+        )
+        Spacer(modifier = Modifier.padding(8.dp)) // Add space
 
-        Button(onClick = { navigationController.navigate("Modify") },
-            modifier = modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            content = {
-                Text(
-                    text = "Modificar"
-                )
-            })
-        Spacer(modifier = Modifier.padding(8.dp))
+        MenuButton(
+            onClick = { navigationController.navigate("Read") },
+            text = "Buscar",
+            icon = Icons.Default.Search
+        )
+        Spacer(modifier = Modifier.padding(8.dp)) // Add space
 
-        Button(onClick = { navigationController.navigate("Delete") },
-            modifier = modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            content = {
-                Text(
-                    text = "Eliminar"
-                )
-            })
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Button(onClick = { navigationController.navigate("Read") },
-            modifier = modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            content = {
-                Text(
-                    text = "Buscar"
-                )
-            })
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Button(onClick = { navigationController.navigate("List") },
-            modifier = modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            content = {
-                Text(
-                    text = "Listar"
-                )
-            })
-        Spacer(modifier = Modifier.padding(8.dp))
-
+        MenuButton(
+            onClick = { navigationController.navigate("List") },
+            text = "Listar",
+            icon = Icons.Default.List
+        )
     }
 }
+
 
 
 //@Preview(showBackground = true)
