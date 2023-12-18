@@ -89,7 +89,7 @@ fun MenuButton(onClick: () -> Unit, text: String, icon: ImageVector) {
             .clip(CircleShape)
             .background(Color.Blue),
         contentPadding = PaddingValues(16.dp),
-        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
+        colors = ButtonDefaults.textButtonColors(contentColor = Color.White),
         content = {
             Row(
                 modifier = Modifier.fillMaxSize(),
